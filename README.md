@@ -25,6 +25,7 @@ We recommend passing sensitive variables as GitHub secrets. [Example usage](http
 - `failure_on_error` - Boolean to make the action report a failure when dbt-cloud runs.
 - `interval` - The interval between polls in seconds (Default: `30`)
 - `get_artifacts` - Whether run results and other artifacts are fetched from dbt cloud. If using this action in other contexts this can be set to `false`, useful for jobs which do not generate artifacts.
+- `fetch_catalog` - Whether the catalog.json is fetched from dbt cloud. If using this action in other contexts this can be set to `false`, useful for jobs which do not generate a catalog.
 
 ### dbt Cloud Job configuration
 
