@@ -1,7 +1,7 @@
 # dbt Cloud job action
 
 Originally a fork of https://github.com/fal-ai/dbt-cloud-action with additional capabilities as the original repo and action seem inactive:
-- adds the ability to cancel jobs
+- adds the ability to cancel jobs when the action is cancelled
 - adds the ability to provide a GitHub PR ID
 - downloads more artefacts than just `run_results.json`
 - rewritten from JS to TS to improve future maintenance
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: b-per/dbt-cloud-action@main
+      - uses: dbt-labs/dbt-cloud-job-action@v6.0.0
         id: dbt_cloud_job_run
         with:
           dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: b-per/dbt-cloud-action@main
+      - uses: dbt-labs/dbt-cloud-job-action@v6.0.0
         id: dbt_cloud_ci_job_run
         with:
           dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
