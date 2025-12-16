@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import type { AxiosInstance } from "axios";
 import * as core from "@actions/core";
 import * as fs from "fs";
 import * as os from "os";
@@ -47,11 +47,11 @@ interface ActionOutputs {
   run_id: number;
 }
 
-(axiosRetry as any)(axios, {
+(axiosRetry as (axiosInstance: unknown, config: unknown) => void)(axios, {
   retryDelay: (retryCount: number) => retryCount * 1000,
   retries: 3,
   shouldResetTimeout: true,
-  onRetry: (retryCount: number, error: Error, requestConfig: AxiosRequestConfig) => {
+  onRetry: (retryCount: number) => {
     console.error(`Error in request (attempt ${retryCount}). Retrying...`);
   },
 });
@@ -187,20 +187,42 @@ async function getJobRun(
   return undefined;
 }
 
+function validateArtifactData(data: unknown, artifactType: string): void {
+  if (data === null || data === undefined) {
+    throw new Error(`${artifactType} artifact data is null or undefined`);
+  }
+  if (typeof data !== "object") {
+    throw new Error(`${artifactType} artifact data is not an object`);
+  }
+}
+
+function validateRunId(id: unknown): number {
+  if (id === null || id === undefined) {
+    throw new Error("Run ID is null or undefined");
+  }
+  if (typeof id !== "number" || isNaN(id)) {
+    throw new Error("Run ID is not a valid number");
+  }
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new Error("Run ID must be a positive integer");
+  }
+  return id;
+}
+
 async function getArtifacts(account_id: string, run_id: number): Promise<void> {
   const res = await dbt_cloud_api.get(
     `/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`,
   );
   const run_results = res.data;
-  
-  let catalog_data: any;
+
+  let catalog_data: unknown;
   if (core.getBooleanInput("fetch_catalog")) {
     const catalog = await dbt_cloud_api.get(
-    `/accounts/${account_id}/runs/${run_id}/artifacts/catalog.json`,
+      `/accounts/${account_id}/runs/${run_id}/artifacts/catalog.json`,
     );
     catalog_data = catalog.data;
   }
-  
+
   const manifest = await dbt_cloud_api.get(
     `/accounts/${account_id}/runs/${run_id}/artifacts/manifest.json`,
   );
@@ -213,10 +235,13 @@ async function getArtifacts(account_id: string, run_id: number): Promise<void> {
     fs.mkdirSync(dir);
   }
 
+  validateArtifactData(run_results, "run_results");
   fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results));
   if (core.getBooleanInput("fetch_catalog")) {
+    validateArtifactData(catalog_data, "catalog");
     fs.writeFileSync(`${dir}/catalog.json`, JSON.stringify(catalog_data));
   }
+  validateArtifactData(manifest_data, "manifest");
   fs.writeFileSync(`${dir}/manifest.json`, JSON.stringify(manifest_data));
 }
 
@@ -226,13 +251,13 @@ async function executeAction(): Promise<ActionOutputs> {
   const failure_on_error = core.getBooleanInput("failure_on_error");
 
   const jobRun = await runJob(account_id, job_id);
-  const runId = jobRun.data.id;
+  const runId = validateRunId(jobRun.data.id);
 
   core.info(`Triggered job. ${jobRun.data.href}`);
 
   fs.appendFileSync(
     process.env.GITHUB_STATE!,
-    `dbtCloudRunID=${jobRun.data.id}${os.EOL}`,
+    `dbtCloudRunID=${runId}${os.EOL}`,
     {
       encoding: "utf8",
     },
