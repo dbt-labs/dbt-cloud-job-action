@@ -101,3 +101,7 @@ jobs:
           cause: "CI job triggered from GH action"
           failure_on_error: true
 ```
+
+# Disclaimer
+
+This GitHub Action is provided as a free, open-source integration under the Apache 2.0 license without any assumption of liability by dbt Labs. It is not a paid offering and is provided without any service level agreements or support commitments. This Action is not intended to independently collect, store, or process personal data, and any data handling occurs solely within GitHub Actions’ native runtime and dbt Cloud in accordance with their respective terms.
