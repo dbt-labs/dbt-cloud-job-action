@@ -65,9 +65,10 @@ const run_status: RunStatus = {
   30: "Cancelled",
 };
 
+const api_timeout_input = core.getInput("api_timeout");
 const dbt_cloud_api: AxiosInstance = axios.create({
   baseURL: `${core.getInput("dbt_cloud_url")}/api/v2/`,
-  timeout: 5000,
+  timeout: api_timeout_input !== "" ? parseInt(api_timeout_input) : 5000,
   headers: {
     Authorization: `Token ${core.getInput("dbt_cloud_token")}`,
     "Content-Type": "application/json",

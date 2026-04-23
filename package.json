@@ -29,13 +29,12 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^2.0.1",
-    "@actions/github": "^6.0.1",
     "axios": "^1.13.2",
     "axios-retry": "^4.5.0",
-    "node-fetch": ">=3.3.2",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
+    "@actions/github": "^9.1.1",
     "@eslint/compat": "^2.0.0",
     "@github/local-action": "^6.0.2",
     "@jest/globals": "^30.2.0",
