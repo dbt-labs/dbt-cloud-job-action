@@ -27,6 +27,7 @@ We recommend passing sensitive variables as GitHub secrets. [Example usage](http
 - `interval` - The interval between polls in seconds (Default: `30`)
 - `get_artifacts` - Whether run results and other artifacts are fetched from dbt cloud. If using this action in other contexts this can be set to `false`, useful for jobs which do not generate artifacts.
 - `fetch_catalog` - Whether the catalog.json is fetched from dbt cloud. If using this action in other contexts this can be set to `false`, useful for jobs which do not generate a catalog.
+- `api_timeout` - Timeout in milliseconds for dbt Cloud API requests (Default: `5000`). Increase this if you experience intermittent timeout errors when the dbt Cloud API is slow to respond.
 
 ### dbt Cloud Job configuration
 

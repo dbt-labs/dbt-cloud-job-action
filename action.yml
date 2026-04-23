@@ -87,6 +87,10 @@ inputs:
     required: false
     default: "true"
 
+  api_timeout:
+    description: Timeout in milliseconds for dbt Cloud API requests. Defaults to 5000ms (5 seconds).
+    required: false
+
 outputs:
   git_sha:
     description: "Repository SHA in which dbt Cloud Job ran"
