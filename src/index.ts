@@ -5,6 +5,7 @@ import * as fs from "fs";
 import * as os from "os";
 import axiosRetry from "axios-retry";
 import YAML from "yaml";
+import { shouldJobFail } from "./status.js";
 
 interface RunStatus {
   [key: number]: string;
@@ -289,8 +290,10 @@ async function executeAction(): Promise<ActionOutputs> {
     }
   }
 
-  if (res?.data.is_error && failure_on_error) {
-    core.setFailed("The job failed with an error.");
+  if (shouldJobFail(res?.data.status, failure_on_error)) {
+    core.setFailed(
+      `The job did not succeed. Status: ${run_status[res!.data.status]}`,
+    );
   }
 
   if (res?.data.is_error) {
