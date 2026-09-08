@@ -97,6 +97,6 @@ outputs:
   run_id:
     description: "Run ID of the dbt Cloud Job that was triggered"
 runs:
-  using: node20
+  using: node24
   main: "dist/index.js"
   post: "dist/index.js"
